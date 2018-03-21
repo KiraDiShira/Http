@@ -3,6 +3,9 @@
 # Http connections
 
 - [Whirlwind Networking](#whirlwind-networking)
+- [Handshakes with a Shark](#handshakes-with-a-shark)
+- [On the Evolution of HTTP](#on-the-evolution-of-http)
+- [Parallel Connections](#parallel-connections)
 
 ## Whirlwind Networking
 
@@ -19,3 +22,53 @@ After TCP at the transport layer comes the IP as a **network layer protocol**. I
 Now, everything we've talked about so far happens inside a computer, but eventually those IP packets have to travel over a piece of wire or fiber optic cable or wireless network, or over a satellite link, and that's the responsibility of the **datalink layer**. A common choice of technology, at this point, is Ethernet. With Ethernet, these IP packets become frames and protocols like Ethernet become very focused on ones and zeros and electrical signals. 
 
 Now, eventually that signal reaches the server and it comes in through a network card where the process is reversed, the datalink layer delivers the packet to the IP layer, which hands it over to TCP, which can reassemble the data into the original HTTP message sent by the client and eventually push it into the web server process. It's all a beautifully engineered piece of work. It's all made possible by standards.
+
+## Handshakes with a Shark
+
+HTTP relies almost entirely on TCP to take care of all the hard work, and TCP does involve some overhead, like the handshakes (La procedura utilizzata per instaurare in modo affidabile una connessione TCP tra due host è chiamata three-way handshake (stretta di mano in 3 passaggi), indicando la necessità di scambiare 3 messaggi tra host mittente e host ricevente affinché la connessione sia instaurata correttamente.) that we can see here in Wire Shark. And thus the performance characteristics of HTTP, they're mostly also going to rely on the performance characteristics of TCP and that's what we're going to talk about next, and we'll also talk about why that red line appears, why did the server close the connection on me.
+
+## On the Evolution of HTTP
+ 
+In the early days of the web when we had the original HTTP specification, most resources were textual and you would go out with your computer and you would request a document from a web server, the web server would give it back to you, and you could go off and read for five minutes before maybe you'd click a link on that document and request another one. The world was very simple then, and it was really easy for a browser to open a connection to a server, send a request, receive the response, and then just close the connection. The idea was, why do we keep connections open if we only need them once every five minutes? 
+
+But for today's web, most web pages require more than a single resource to fully render. Every webpage I go to is going to have one or more images, one or more JavaScript files, one or more CSS style sheets, it's not uncommon to request a webpage and have that spawn off 30 or 50 or 100 additional HTTP requests to retrieve all the resources associated with that page. So, if today's web browsers were to open connections one at a time like this and wait for each resource to fully download before starting the next download, then the web would feel very very slow because the internet's fully of latency, signals have to travel long distances and wind their way through different pieces of hardware, and as we saw on Wire Shark, there's also some overhead in establishing a TCP connection, the three step handshake. 
+
+So, this is the evolution from simple documents to complex pages.
+
+## Parallel Connections
+
+Most user agents, aka web browsers will not make requests in a serial one by one fashion, instead they can open multiple, parallel, connections to a server. So, for example, when downloading the HTML for a page, the browser might see two image tags in that page, so it can open two connections to download the images simultaneously. Hopefully that will cut the amount of time needed to display the images in half, but it's not always perfect like that, and the exact number of parallel connections that a browser will make depends on the browser and how it's configured. 
+
+For a long time we considered two as the maximum number of parallel connections a browser would create. We considered two the max because the most popular browser from any year is Internet Explorer six, able to only allow two simultaneous connections to a single host, and to be fair, Internet Explorer six was really just following the HTTP specification, which says, a single user client should not maintain any more than two connections with a server. But, a lot of people found ways to work around this limitation, or at least perceived limitation, to increase the number of parallel downloads. 
+
+So, for example, this two connection limitation is per host, per host name, meaning IE six would happily make two connections to www.odetocode.com and two connections to images.odetocode.com, so by hosting images on a different server, then you can have four parallel requests, and that different server just needed to be a different host name. 
+
+Ultimately, your DNS records could point all four requests to the same physical server, but IE six was just using that two connection limit per host name, it would happily open four connections in that scenario. A lot of people also figured out how to go into the registry and make IE six support more connections. 
+
+Now, things are a bit different today, and most modern web browsers will use a different set of heuristics when deciding on how many parallel connections to establish. So, for example, in IE eight you can now have up to six concurrent connections per host. And the real question then is, well if six is better than two then why don't we just open 100 parallel connections? Well connections and parallel connections, they're they're going to obey the law of diminishing returns. If you have too many connections open it can saturate and congest the network, particularly when you're dealing with mobile devices and unreliable networks. So, having too many connections can hurt performance, and also a server can only accept a finite number of connections. So, if 100,000 browsers simultaneously create 100 connections to a single web server, I'm sure that bad things are going to happen. Still, using more than one connection per agent is better than downloading everything in a serial fashion and parallel connections are not the only performance optimization in HTTP.
+
+## Persistent Connections
+
+In the early days of the web, it was easy for a browser to open and close a connection for each request it sent to a server and that is literally create a new socket, connect it, send a request, get a response, and close the socket. That was in line with HTTP's idea of being a completely stateless protocol. 
+
+But, as we've seen, the number of requests per page has grown and the overhead generated by TCP handshakes and the in memory data structures required to establish each socket connection, it's not trivial. 
+
+So, to reduce the overhead and improve performance, the HTTP 1.1 specification suggests that implementation should implement persistent connections and actually persistent connections are the default type of connection in HTTP 1.1. A persistent connection stays open after the completion of one request response transaction. That leaves the browser with an already open socket it can use to continue making requests to the server, without the overhead of opening a new socket. Persistent connections also avoid the slow start strategy that is part of TCP congestion control and that's going to make persistent connections perform better over time. 
+
+So, in short, these persistent connections that we have today with HTTP, they typically reduce memory usage, reduce CPU usage, reduce network congestion, reduce latency, they generally improve the response time of a page, but like everything in software there is always a downside. A server can only support a finite number of connections, the exact number depends on the amount of memory, the configuration of the server, the performance of your application. There's a whole host of variables there. So, it's difficult to give an exact number, but generally speaking, if you're talking about supporting thousands of concurrent connections, you're going to have to start testing to see if a server will support that load.
+
+Many servers are configured to limit the number of concurrent connections far below the point where the server will just fall over. And that configuration is as much a security measure as anything else. It helps to prevent a denial service attack because it's relatively easy for someone to create a program or a script that will just open thousands of persistent connections to a server and not do anything with them, or send a minimal amount of data over over the connections, so persistent connections are performance optimization, but some people also see them as a vulnerability. 
+
+So, thinking along those lines of persistent connections possibly being a vulnerability, we've talked about them remaining open, but for how long? In a world where you have infinite scalability, you can keep the connections open as long as you want, but because a server supports a finite number of connections, most servers will be configured to close a persistent connection if it's idle for some period of time. For example, in the most recent Apache release, I know the default time out is five seconds. 
+
+User agents can also close connections after a period of idle time. If you want visibility into actual physical connections that are being opened and closed you can use a network analyzer like Wire Shark. In addition to aggressively closing persistent connections, most web server software can also be configured to not enable persistent connections. That's common with shared servers. Shared servers are sacrificing performance because they're hosting hundreds of websites on the same machine, they're sacrificing performance to allow as many connections as possible, and because persistent connections are the default connection style with HTTP 1.1, a server that does not allow a persistent connection has to include a connection header in every HTTP response. That response header is connection close, that's a signal to the client that the connection will not be persistent and it should be closed as soon as possible, the agent is not allowed to make a second request on the same connection. That's something I should have checked for in my HTTP client, I should have seen if there was a connection close header, and immediately closed the socket after receiving the data.
+
+<img src="https://github.com/KiraDiShira/Http/blob/master/HTTPConnections/Images/conn2.PNG" />
+
+One additional optimization that I want to mention is the **pipeline connection**. Now, persistent and parallel connections are both widely used and supported by clients and servers, but the HTTP specification also allows for pipeline connections, which are not as widely supported by either servers or clients. In a pipeline connection a user agent can send multiple HTTP requests on a single connection and send those off before it even waits for the first response. Pipelining allows for more efficient packing of requests and to packets and can reduce latency, but like I say, it's just not as widely supported as parallel and persistent connections.
+
+From stackoverflow:
+
+As I under stand it, "parallel downloads" are requests going out on multiple sockets. They can be to totally unrelated servers but they don't have to be.
+
+Pipelining is an HTTP/1.1 feature that lets you make multiple requests on the same socket before receiving a response. When connecting to the same server, this reduces the number of sockets, conserving resources.
