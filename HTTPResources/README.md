@@ -48,5 +48,14 @@ Unfortunately, you can still transmit unsafe characters in a URL, but they need 
 
  <img src='https://github.com/KiraDiShira/Http/blob/master/HTTPResources/Images/res7.PNG' />
 
-As an example, if you really did want to have `Scott Allen` in a URL, it would need to be encoded so that it would come out to be Scott&20Allen. Almost every web application framework will make this really easy. They all have APIs for URL encoding. On the service side, you should run dynamically created URLs through the encoding algorithm just in case one of the unsafe characters will appear in the URL.
+As an example, if you really did want to have `Scott Allen` in a URL, it would need to be encoded so that it would come out to be Scott%20Allen. Almost every web application framework will make this really easy. They all have APIs for URL encoding. On the service side, you should run dynamically created URLs through the encoding algorithm just in case one of the unsafe characters will appear in the URL.
  
+## Content Types
+
+There are thousands of different resources on the web. There are images, there are hypertext documents, xml documents, video files, audio files, executable applications, PDF documents and Word documents. In order for a host to properly serve a resource and in order for the client to properly display a resource, the parties involved have to be very specific and precise about the type of resource.
+
+So when a host responds to an HTTP request, it returns a resource and also specifies the **content type**. This is also known as the **media type** of the resource. 
+
+The content type that a server will specify rely on the **Multi-purpose Internet Mail Extensions** or **MIME** standards. Although MIME was originally designed for email communications it worked so well that HTTP uses these standards for the same purpose, which is to label the content in a way that the client will know what the content is.
+
+ <img src='https://github.com/KiraDiShira/Http/blob/master/HTTPResources/Images/res8.PNG' />
