@@ -25,3 +25,17 @@ mailto://scott@odetocode.com
 Some resources will also lead the browser to download additional resources. This `food.com` page will include images, JAVA script files, cascading style sheets and other resources that all combine together to present the recipe that we're viewing.
 
 ## Ports, Queries, and Fragments
+
+<img src='https://github.com/KiraDiShira/Http/blob/master/HTTPResources/Images/res2.PNG' />
+
+ Number 80 represents the port number that the host is going to use to listen for HTTP requests. So you only need to specify the port number if the server is listening when a port other than the default port, port 80, and that usually only happens in testing, debugging and development environments because most commercial websites don't want a port number in their URL, it just makes the URL that much harder to remember and it makes the URL a little bit longer.
+ 
+ <img src='https://github.com/KiraDiShira/Http/blob/master/HTTPResources/Images/res3.PNG' />
+ 
+ <img src='https://github.com/KiraDiShira/Http/blob/master/HTTPResources/Images/res4.PNG' />
+ 
+ The fragment is different than the other pieces we've looked at so far because unlike the path in the query string the fragment is not processed by the server. The fragment is only used on the client and it identifies a particular section of a resource that the client should navigate to or focus on. Web browsers will typical align the initial display of a web page such that the element identified in the fragment will be at the top of the screen.
+ 
+  <img src='https://github.com/KiraDiShira/Http/blob/master/HTTPResources/Images/res5.PNG' />
+ 
+ 
