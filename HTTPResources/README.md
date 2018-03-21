@@ -2,6 +2,8 @@
 
 - [Uniform Resource Locators](#uniform-resource-locators)
 - [Ports, Queries, and Fragments](#ports-queries-and-fragments)
+- [Url encoding](#url-encoding)
+- [Content Types](#content-types)
 
 ## Uniform Resource Locators
 
