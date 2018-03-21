@@ -4,6 +4,7 @@
 - [Ports, Queries, and Fragments](#ports-queries-and-fragments)
 - [Url encoding](#url-encoding)
 - [Content Types](#content-types)
+- [Content Negotiation](#content-negotiation)
 
 ## Uniform Resource Locators
 
@@ -61,3 +62,7 @@ So when a host responds to an HTTP request, it returns a resource and also speci
 The content type that a server will specify rely on the **Multi-purpose Internet Mail Extensions** or **MIME** standards. Although MIME was originally designed for email communications it worked so well that HTTP uses these standards for the same purpose, which is to label the content in a way that the client will know what the content is.
 
  <img src='https://github.com/KiraDiShira/Http/blob/master/HTTPResources/Images/res8.PNG' />
+ 
+ ## Content Negotiation
+ 
+A resource that's identified by a single URL can have multiple representations. Take, for example, the broccoli recipe that we were looking at earlier. A single recipe might have representations in different languages like English versus French versus German. It could also have representations that differ by format HTML versus PDF versus plain text versus xml. It's all the same resource and the same recipe just different representations. The question that comes to mind then is which representations should the server use and the answer to that is in the content negotiation mechanism described by the HTTP specification. So when a client makes an HTTP request to a server, the client can specify the media types that it will accept.
