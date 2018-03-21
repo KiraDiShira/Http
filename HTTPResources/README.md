@@ -1,7 +1,7 @@
 # Http resources
 
 - [Uniform Resource Locators](#uniform-resource-locators)
-- [Ports, Queries, and Fragments]
+- [Ports, Queries, and Fragments](#ports-queries-and-fragments)
 
 ## Uniform Resource Locators
 
