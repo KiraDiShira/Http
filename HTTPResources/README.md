@@ -66,3 +66,5 @@ The content type that a server will specify rely on the **Multi-purpose Internet
  ## Content Negotiation
  
 A resource that's identified by a single URL can have multiple representations. Take, for example, the broccoli recipe that we were looking at earlier. A single recipe might have representations in different languages like English versus French versus German. It could also have representations that differ by format HTML versus PDF versus plain text versus xml. It's all the same resource and the same recipe just different representations. The question that comes to mind then is which representations should the server use and the answer to that is in the content negotiation mechanism described by the HTTP specification. So when a client makes an HTTP request to a server, the client can specify the media types that it will accept.
+
+In HTTP, content negotiation is the mechanism that is used for serving different representations of a resource at the same URI, so that the user agent can specify which is best suited for the user (for example, which language of a document, which image format, or which content encoding).
