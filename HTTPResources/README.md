@@ -1,6 +1,7 @@
 # Http resources
 
 - [Uniform Resource Locators](#uniform-resource-locators)
+- [Ports, Queries, and Fragments]
 
 ## Uniform Resource Locators
 
@@ -22,3 +23,5 @@ mailto://scott@odetocode.com
 **url path**: The `food.com` host should recognize what specific resources requested by this path and respond appropriately. A path looks very hierarchical like a file system path and sometimes a URL will point to a real resource that is on the host's file system or hard drive. For example, the URL `food.com/logo.jpeg` might point to a jpeg file that really does exist on the `food.co`m server; however, resources can also be dynamic. The URL `food.com/recipes/broccoli probably` doesn't refer to a real file on the `food.com` server. Instead, some sort of application is running on the `food.com` host that will take that request and build a resource using content from a database. 
 
 Some resources will also lead the browser to download additional resources. This `food.com` page will include images, JAVA script files, cascading style sheets and other resources that all combine together to present the recipe that we're viewing.
+
+## Ports, Queries, and Fragments
