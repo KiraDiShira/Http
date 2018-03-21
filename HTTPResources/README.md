@@ -38,4 +38,11 @@ Some resources will also lead the browser to download additional resources. This
  
   <img src='https://github.com/KiraDiShira/Http/blob/master/HTTPResources/Images/res5.PNG' />
  
+ ## URL Encoding
+ 
+The official standards describing URLs go to great lengths to make sure URLs are as useable and interoperable as possible. A URL should be as easy to communicate through email as it is to put on a billboard or a bumper sticker or a business card. For this reason, the standards to find unsafe characters for URLs and unsafe character is a character that should not appear in an URL. For example, the space character is considered unsafe because spaces are hard to read. They can mistakenly appear/disappear when a URL is in printed form. Other unsafe characters include the pound sign because it's used to delimit a fragment. That doesn't mean that you cannot use a pound sign in a URL; it just means that the pound sign can only be used in its reserved position which is to delimit a fragment. Another unsafe character is the caret because it isn't always transmitted correctly through the network. RFC 3986, which is the Internet standard or the law for URLs, defines the following safe characters:
+ 
+ <img src='https://github.com/KiraDiShira/Http/blob/master/HTTPResources/Images/res6.PNG' />
+ 
+Unfortunately, you can still transmit unsafe characters in a URL, but they need to be percent encoded or URL encoded; two different terms but it's the same outcome. Percent encoding is the process of taking a character like the space character and a URL and replacing it with a percent 20; 20 is the hexadecimal value for the space character in the US ASCII character set and so a percent encoding is basically taking that hexadecimal value, putting a percent in front and then replacing a character in the URL with that percent encoded value. As an example, if you really did want to have `Scott Allen` in a URL, it would need to be encoded so that it would come out to be Scott&20Allen. Almost every web application framework will make this really easy. They all have APIs for URL encoding. On the service side, you should run dynamically created URLs through the encoding algorithm just in case one of the unsafe characters will appear in the URL.
  
