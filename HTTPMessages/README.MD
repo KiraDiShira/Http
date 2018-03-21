@@ -3,6 +3,7 @@
 # Http messages
 
 - [Message Types](#message-types)
+- [HTTP Methods](#http-methods)
 
 ## Message Types
 
@@ -13,3 +14,9 @@ It's formatted according to the HTTP/1.1 specification. The request and the resp
 <img src="https://github.com/KiraDiShira/Http/blob/master/HTTPMessages/Images/httpmess1.PNG" />
 
 The standards define what goes into those messages, so that everyone who speaks HTTP will understand each other and be able to exchange resources. Or, when the resource doesn't exist, the HTTP response can contain an error message, that the client will understand that that resource didn't exist.
+
+## HTTP Methods
+
+The method tells the server what the request wants to do. 
+
+<img src="https://github.com/KiraDiShira/Http/blob/master/HTTPMessages/Images/httpmess2.PNG" />
