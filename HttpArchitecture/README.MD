@@ -8,7 +8,7 @@
 
 A proxy server is a server that sits between a client and a server. A proxy is mostly transparent to the end user. So you think you're sending a request directly to a server, but the HTTP request message is actually going to the proxy, which will take that message and forward it to the server that you want it to get to. It can also, then, wait on the response from the server and forward it back to the client. 
 
-<img src="arch1.png" />
+<img src="https://github.com/KiraDiShira/Http/blob/master/HttpArchitecture/Images/arch1.png" />
 
 But before forwarding either of those messages, the proxy can also inspect the message and potentially take some initial actions. For example, one of the clients I work for uses a proxy to capture all HTTP traffic leaving the office. They don't want employees and contractors spending their time on Twitter and Facebook, so HTTP requests to those servers will never reach their destinations, and there's no tweeting or Farmville inside the office. That's an example of one popular role for a proxy server, which is to function as an access control device. 
 
