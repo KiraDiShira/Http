@@ -4,6 +4,7 @@
 
 - [The Stateful Stateless Web](#the-stateful-stateless-web)
 - [Cookies](#cookies)
+- [Tracing Sessions and HttpOnly](#tracing-sessions-and-httpOnly)
 
 ## The Stateful Stateless Web
 
@@ -33,4 +34,29 @@ Before we get into the details of what cookies look like and how they behave, it
 
 Secondly, they do raise some privacy concerns in some circles. Some users will disable cookies in their browsers meaning the browser will reject any cookies that a server gives them. And disabled cookies present a problem for sites that need to track users of course and the alternatives are a little bit messy. For example, one approach to a cookieless session is to place some sort of user identifier into the URL, meaning each and every URL that a site gives to a user must contain the proper identifier and the URLs become much larger. That's why we often call this technique the fat URL technique. 
 
-When a Website wants to give a user a cookie, it uses a **set cookie header** in an HTTP response. So here's an incoming request to searchengine.com, someone is searching for lyrics. Searchengine.com wants to track users so in the HTTP response to that message, it's going to have a set cookie header. There are three pieces of information in this particular cookie. The three pieces are delimited by semi colons. First there's a collection of name value pairs and these name value pairs themselves are delimited by a dollar sign. That's very similar to how query parameters are formatted into a URL, we looked at that in the first module. In this example the server must want to store the user's first name and last name in the cookie. The second and third pieces of information are the domain and the path, we'll circle back around and talk about those a little bit later. Now a Website can put any information that it wants into a cookie but many Websites will only put a unique identifier, perhaps a Guid. And there's a couple reasons for this. One is, there is a size limitation in cookies of around four kilobytes and secondly, a server can never really trust anything that it stores on the client unless it's cryptographically secured. So while it is possible to store encrypted data in a cookie, it's usually just easier to store an ID. Assuming the browser is configured to accept cookies then the browser will take that cookie and it's going to send it along in any subsequent request it that it makes to searchengine.com that GUID will be there. And when the ID arrives at the server, the server can use that to look up the associated data for that user from an in memory data structure or from a database or from a distributed cache. You can configure most Web application frameworks to manipulate cookies automatically and look up session state for you. Let's take a look at an example of how this works.
+When a Website wants to give a user a cookie, it uses a **set cookie header** in an HTTP response. So here's an incoming request to searchengine.com, someone is searching for lyrics.
+
+<img src="https://github.com/KiraDiShira/Http/blob/master/HTTPSecurity/Images/Sec1.PNG" />
+
+Searchengine.com wants to track users so in the HTTP response to that message, it's going to have a set cookie header.
+There are three pieces of information in this particular cookie. The three pieces are delimited by semi colons. First there's a **collection of name value pairs** and these name value pairs themselves are delimited by a dollar sign. That's very similar to how query parameters are formatted into a URL, we looked at that in the first module. In this example the server must want to store the user's first name and last name in the cookie. The second and third pieces of information are the **domain** and the **path**, we'll circle back around and talk about those a little bit later. Now a Website can put any information that it wants into a cookie but many Websites will only put a unique identifier, perhaps a Guid. 
+
+<img src="https://github.com/KiraDiShira/Http/blob/master/HTTPSecurity/Images/Sec2.PNG" />
+
+And there's a couple reasons for this. One is, there is a size limitation in cookies of around four kilobytes and secondly, a server can never really trust anything that it stores on the client unless it's cryptographically secured. So while it is possible to store encrypted data in a cookie, it's usually just easier to store an ID. Assuming the browser is configured to accept cookies then the browser will take that cookie and it's going to send it along in any subsequent request it that it makes to searchengine.com that GUID will be there.
+
+<img src="https://github.com/KiraDiShira/Http/blob/master/HTTPSecurity/Images/Sec3.PNG" />
+
+And when the ID arrives at the server, the server can use that to look up the associated data for that user from an in memory data structure or from a database or from a distributed cache. You can configure most Web application frameworks to manipulate cookies automatically and look up session state for you. Let's take a look at an example of how this works.
+
+## Tracing Sessions and HttpOnly
+
+One other piece that I want to point out is that if I go to a different browser and this time I'll go to Internet Explorer and if we try to go to the same page, signedup.cshtml, it doesn't know my name. And this is because cookies get set in a browser and yes they are per user but if the user is using different browsers or has cookies disabled that can sort of mess things up. 
+
+So first of all I want to point out that first name and last name, that was not data that was stored in the Cookie. Instead the only thing stored in the cookie is some sort of session identifier. First name and last name are stored by default with asp.net in memory on the Web server. The Web server's just using this cookie value to look up the proper data structure in memory. Secondly, we might look at this ID, u3ylzcntnrr, etc. and wonder why it's so complicated. Well one security concern around session identifiers is how they can open up the possibility of someone high jacking some other user's session. 
+
+I want to point out the **HTTPOnly** flag here because another security concern around cookies is that they are vulnerable to a **cross site scripting attack**. 
+
+<img src="https://github.com/KiraDiShira/Http/blob/master/HTTPSecurity/Images/Sec4.PNG" />
+
+In a cross site scripting attack a malicious user injects Java script code into someone else's Website and if the other Website sends that malicious script to their users, a script has the ability to modify and inspect and steal cookie information. So a malicious script could find my asp.net session ID and perhaps use an Ajax request to send it off to some other server where someone's recording these things and then they know my session ID. To stop that sort of problem it was actually Microsoft that introduced this HTTPOnly flag and it's now a standard. And what the HTTPOnly flag tells the browser, the user agent, is that it should not allow script code to access this cookie. This cookie exists only to put into HTTP request and travel in the header of every HTTP request message. So browsers that correctly implement HTTPOnly, and most of them do these days, will not allow clients like Javascript to read or write this cookie on the client. And that is a very good thing because cross site scripting attacks are very popular these days.
